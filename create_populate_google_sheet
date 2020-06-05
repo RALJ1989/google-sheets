@@ -1,0 +1,41 @@
+#! python3
+
+import ezsheets, os  # install these modules if necessary
+import pyinputplus as pyip  # this module allows shortcuts for validating user inputs
+
+ss = ezsheets.createSpreadsheet('To-Do List')  # create a spreadsheet in your Google Drive with a custom name
+print('New spreadsheet created: To-Do List')
+
+sheet1 = ss[0]  # variable to control the 1st worksheet of this new spreadsheet
+
+toDoList = []  # emtpy list which will be used to populate to-do items
+
+while True:  # loop for accepting as many user inputs as necessary to the to-do list
+    addNewItem = pyip.inputChoice(choices=('y', 'n'), prompt='Do you wish to add a new item to the to-do list? (y/n)')
+    if addNewItem == 'y':
+        print('What item do you wish to add to the to-do list?')
+        item = input()
+        toDoList.append(str(item))  # appends the user input to the to-do list, so long as the user wishes to keep adding items
+    elif addNewItem == 'n':
+        print(r'''OK, that's the end of your to-do list for now''')
+        break  # breaks out of the loop if the user no longer wishes to add items
+
+sheet1.updateColumn(1, toDoList)  # updates column 1, row-by-row, with all of the items from the to-do list
+print(r'''Your to-do list has been saved in your Google Drive. Please see the file 'To-Do List' ''')
+
+saveGate = pyip.inputChoice(choices=('y', 'n'), prompt='Do you wish to save the spreadsheet to your local machine? (y/n)')
+if saveGate == 'y':
+    os.chdir('C:\\Users\\Rozh\\Desktop')  # change directory location to your local machine (use whichever location you wish to save your file to)
+    ss.downloadAsExcel()  # saves the spreadsheet to the user's custom location
+    print('Your spreadsheet has been saved to your local machine at your desired location')
+elif saveGate == 'n':
+    print('Your spreadsheet has not been saved to your local machine')
+
+deleteGate = pyip.inputChoice(choices=('y', 'n'), prompt='Do you wish to delete the spreadsheet from your Google Drive? (y/n)')
+if deleteGate == 'y':
+    ss.delete()  # temporary deletes the spreadsheet from Google Drive (i.e. sends it to Trash)
+    print('Your spreadsheet has been deleted from your Google Drive')
+elif deleteGate == 'n':
+    print('Your spreadsheet remains on your Google Drive')
+
+exit()
